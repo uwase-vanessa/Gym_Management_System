@@ -1,0 +1,166 @@
+{% include 'admin_nav.html' %}
+{% load static %}
+{% block main %}
+<html lang="en" class="no-focus">
+<head>
+    <title>Fitness Management System - Admin Dashboard</title>
+    <link rel="stylesheet" id="css-main" href="{% static 'css1/codebase.min.css' %}">
+    <style>
+        .container1 {
+            background-color: lightgrey;
+            border-radius: 8px;
+        }
+        h2, h4 {
+            padding: 10px;
+        }
+        .mydiv:hover {
+            transform: translateY(-10px);
+        }
+        .glow {
+            font-size: 80px;
+            color: #fff;
+            text-align: center;
+            -webkit-animation: glow 1s ease-in-out infinite alternate;
+        }
+        @-webkit-keyframes glow {
+            from {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073,
+                0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+            }
+            to {
+                text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px
+                #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+            }
+        }
+    </style>
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <br><br><br>
+    <!-- Page Content -->
+    <div class="content">
+        <div class="row gutters-tiny invisible" data-toggle="appear">
+            <!-- Row #1 -->
+            <div class="col-6 col-md-3 col-xl-4">
+                <a class="block text-center" href="{% url 'viewEnquiry' %}">
+                    <div class="block-content ribbon ribbon-bookmark ribbon-crystal ribbon-left bg-gd-dusk">
+                        <div class="ribbon-box">{{ en }}</div>
+                        <p class="mt-5">
+                            <i class="fas fa-book-reader fa-3x text-white-op"></i>
+                        </p>
+                        <p class="font-w600 text-white">Total Enquiry</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3 col-xl-4">
+                <a class="block text-center" href="{% url 'viewPlan' %}">
+                    <div class="block-content ribbon ribbon-bookmark ribbon-crystal ribbon-left bg-gd-dusk">
+                        <div class="ribbon-box">{{ p }}</div>
+                        <p class="mt-5">
+                            <i class="fas fa-book fa-3x text-white-op"></i>
+                        </p>
+                        <p class="font-w600 text-white">Total Plan</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3 col-xl-4">
+                <a class="block text-center" href="{% url 'viewEquipment' %}">
+                    <div class="block-content ribbon ribbon-bookmark ribbon-crystal ribbon-left bg-gd-sea">
+                        <div class="ribbon-box">{{ eq }}</div>
+                        <p class="mt-5">
+                            <i class="fas fa-edit fa-3x text-white-op"></i>
+                        </p>
+                        <p class="font-w600 text-white">Total Equipment</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3 col-xl-4">
+                <a class="block text-center" href="{% url 'viewMember' %}">
+                    <div class="block-content ribbon ribbon-bookmark ribbon-crystal ribbon-left bg-gd-sea">
+                        <div class="ribbon-box">{{ m }}</div>
+                        <p class="mt-5">
+                            <i class="fas fa-folder-open fa-3x text-white-op"></i>
+                        </p>
+                        <p class="font-w600 text-white">Total Member</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <canvas id="memberChart" width="800" height="400"></canvas>
+    </div>
+    <br><br><br>
+
+    <!-- Scripts -->
+    <script>
+        // Safely parse Django-passed data
+        const chartData = JSON.parse('{{ s|safe|escapejs }}');
+
+        // Extract the labels (dates) and data (counts)
+        const labels = Object.keys(chartData);
+        const data = Object.values(chartData);
+
+        // Debugging in the console
+        console.log('Labels:', labels);
+        console.log('Data:', data);
+
+        // Initialize Chart.js
+        const ctx = document.getElementById('memberChart').getContext('2d');
+        const memberChart = new Chart(ctx, {
+            type: 'line', // Linear chart
+            data: {
+                labels: labels, // X-axis labels (dates)
+                datasets: [{
+                    label: 'Members Joined', // Chart label
+                    data: data, // Y-axis data (counts)
+                    borderColor: 'rgba(75, 192, 192, 1)', // Line color
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Fill color under the line
+                    borderWidth: 2,
+                    tension: 0.4 // Smooth curve
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Members'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Additional JS Files -->
+    <script src="{% static 'js1/core/jquery.min.js' %}"></script>
+    <script src="{% static 'js1/core/popper.min.js' %}"></script>
+    <script src="{% static 'js1/core/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js1/core/jquery.slimscroll.min.js' %}"></script>
+    <script src="{% static 'js1/core/jquery.scrollLock.min.js' %}"></script>
+    <script src="{% static 'js1/core/jquery.appear.min.js' %}"></script>
+    <script src="{% static 'js1/core/jquery.countTo.min.js' %}"></script>
+    <script src="{% static 'js1/core/js.cookie.min.js' %}"></script>
+    <script src="{% static 'js1/codebase.js' %}"></script>
+</body>
+</html>
+{% endblock %}
